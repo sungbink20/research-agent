@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"/Users/skim/Documents/cryptoprojects/research agent\" && npx create-next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --no-import-alias --use-npm 2>&1 | tail -20)",
+      "Bash(cd \"/Users/skim/Documents/cryptoprojects/research agent\" && npx create-next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --no-import-alias --use-npm --no-turbopack 2>&1 <<EOF\nNo\nEOF)",
+      "Bash(cd \"/Users/skim/Documents/cryptoprojects/research agent/backend\" && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt 2>&1 | tail -10)",
+      "Bash(cd \"/Users/skim/Documents/cryptoprojects/research agent/backend\" && source venv/bin/activate && python -c \"from app.schemas import InvestmentMemo, MemoRequest, MemoResponse; print\\('Schemas OK'\\)\" && python -c \"from app.config import validate_config; print\\('Config OK:', validate_config\\(\\)\\)\" && python -c \"from app.main import app; print\\('App OK:', app.title\\)\")",
+      "Bash(cd \"/Users/skim/Documents/cryptoprojects/research agent/frontend\" && npx next build 2>&1 | tail -20)",
+      "Bash(cd \"/Users/skim/Documents/cryptoprojects/research agent/backend\" && python -c \"import ast; ast.parse\\(open\\('app/pipeline/web_search.py'\\).read\\(\\)\\); ast.parse\\(open\\('app/pipeline/researcher.py'\\).read\\(\\)\\); ast.parse\\(open\\('app/config.py'\\).read\\(\\)\\); print\\('All Python files parse OK'\\)\")"
+    ]
+  }
+}

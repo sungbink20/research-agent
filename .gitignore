@@ -1,0 +1,46 @@
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+
+node_modules/
+.next/
+.turbo/
+dist/
+build/
+
+.DS_Store
+.env
+.env.*
+
+.idea/
+.vscode/
+
+*.log
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+backend/data/
+
+# Environment
+.env
+backend/.env
+frontend/.env.local
+
+# Node
+node_modules/
+.next/
+frontend/.next/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
