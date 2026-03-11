@@ -11,11 +11,11 @@ frontend/          Next.js (App Router, TypeScript, Tailwind)
 backend/           FastAPI (Python, Pydantic, SQLite)
   app/
     api/           HTTP routes
-    services/      Business logic orchestration
-    pipeline/      Claude-powered research generation
+    services/      Business logic orchestration + persistence
+    pipeline/      OpenAI-powered research generation with Tavily web search
     db/            SQLite persistence
     schemas.py     Pydantic models (single source of truth for data shapes)
-    config.py      Environment config
+    config.py      Environment + model + API key config
     main.py        FastAPI app entry point
 ```
 
@@ -26,6 +26,7 @@ backend/           FastAPI (Python, Pydantic, SQLite)
 - Python 3.11+
 - Node.js 18+
 - An OpenAI API key (get one at https://platform.openai.com)
+- (Optional but recommended) A Tavily API key for live web search (https://tavily.com)
 
 ### Backend
 
@@ -39,9 +40,10 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Configure API key
+# Configure API keys
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+# Edit .env and add at least your OPENAI_API_KEY
+# Optionally set TAVILY_API_KEY for live web search grounding
 
 # Run the server
 uvicorn app.main:app --reload --port 8000
@@ -73,7 +75,7 @@ The frontend will be available at `http://localhost:3000`.
 
 ## Memo Fields
 
-Each generated memo includes:
+Each generated memo is produced by an OpenAI chat model, optionally grounded with live web search results from Tavily, and includes:
 
 - **Summary**: Executive overview
 - **Product**: What it does
@@ -89,8 +91,8 @@ Each generated memo includes:
 
 ## Important Limitations
 
-- **Sources are from AI training data**, not live web searches. They should be independently verified.
-- **Knowledge cutoff**: The AI model has a training data cutoff. Very recent events may not be reflected.
+- **Sources come from a mix of live web search and model knowledge**, and may contain inaccuracies. They should be independently verified.
+- **Web search is best-effort**: if `TAVILY_API_KEY` is not configured or Tavily is unavailable, the pipeline falls back to model-only mode.
 - **Not investment advice**: This is a research acceleration tool, not a decision-making system.
 
 ## Next Improvements
@@ -99,10 +101,9 @@ See the "What to Build Next" section at the bottom of this file.
 
 ## What to Build Next
 
-1. **Live web search**: Add a web search step before Claude to get current information
-2. **Document ingestion**: Upload PDFs, earnings transcripts, or paste URLs for analysis
-3. **Memo comparison**: Side-by-side view of two companies or two versions of a memo
-4. **Export**: PDF/Notion/email export of memos
-5. **Prompt tuning**: Admin UI to edit the system prompt without code changes
-6. **Caching**: Don't re-research the same company within a configurable window
-7. **Auth**: Simple auth if deployed beyond localhost
+1. **Document ingestion**: Upload PDFs, earnings transcripts, or paste URLs for analysis using the same retrieval pipeline
+2. **Memo comparison**: Side-by-side view of two companies or two versions of a memo
+3. **Export**: PDF/Notion/email export of memos
+4. **Prompt tuning**: Admin UI to edit the system prompt without code changes
+5. **Caching**: Don't re-research the same company within a configurable window
+6. **Auth**: Simple auth if deployed beyond localhost
