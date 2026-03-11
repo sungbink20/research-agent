@@ -25,7 +25,7 @@ backend/           FastAPI (Python, Pydantic, SQLite)
 
 - Python 3.11+
 - Node.js 18+
-- An Anthropic API key (get one at https://console.anthropic.com)
+- An OpenAI API key (get one at https://platform.openai.com)
 
 ### Backend
 
@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 # Configure API key
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+# Edit .env and add your OPENAI_API_KEY
 
 # Run the server
 uvicorn app.main:app --reload --port 8000
