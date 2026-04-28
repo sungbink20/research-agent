@@ -121,6 +121,13 @@ def list_memos(limit: int = 50, offset: int = 0) -> list[MemoListItem]:
     return items
 
 
+def get_all_memos() -> list[MemoRecord]:
+    """Fetch all memos. Used for backfilling the vector store."""
+    conn = _get_connection()
+    rows = conn.execute("SELECT * FROM memos ORDER BY created_at DESC").fetchall()
+    return [_row_to_record(row) for row in rows]
+
+
 def update_feedback(memo_id: str, feedback: FeedbackRequest) -> Optional[MemoRecord]:
     """Update feedback/rating on an existing memo."""
     conn = _get_connection()

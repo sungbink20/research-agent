@@ -16,8 +16,9 @@ Future additions would go here:
 import logging
 from typing import Optional
 
-from app.db.database import get_memo, list_memos, save_memo, update_feedback
+from app.db.database import get_all_memos, get_memo, list_memos, save_memo, update_feedback
 from app.pipeline.researcher import generate_memo
+from app.pipeline.vector_store import index_memo
 from app.schemas import (
     FeedbackRequest,
     MemoListItem,
@@ -48,6 +49,12 @@ async def create_memo(query: str, context: Optional[str] = None) -> MemoResponse
     # Step 2: Persist
     record = save_memo(query=query, context=context, memo=memo)
 
+    # Step 3: Index into vector store for future RAG retrieval
+    try:
+        index_memo(record.id, memo)
+    except Exception as e:
+        logger.warning(f"Failed to index memo into vector store: {e}")
+
     logger.info(f"Memo saved: id={record.id}, company={memo.company_name}")
 
     return MemoResponse(
@@ -72,3 +79,21 @@ def submit_feedback(
 ) -> Optional[MemoRecord]:
     """Attach user feedback to a memo."""
     return update_feedback(memo_id, feedback)
+
+
+def backfill_vector_store() -> int:
+    """
+    Index all existing memos into ChromaDB.
+    One-time operation for memos created before RAG was added.
+    Returns the number of memos indexed.
+    """
+    records = get_all_memos()
+    indexed = 0
+    for record in records:
+        try:
+            if index_memo(record.id, record.memo):
+                indexed += 1
+        except Exception as e:
+            logger.warning(f"Failed to index memo {record.id}: {e}")
+    logger.info(f"Backfill complete: {indexed}/{len(records)} memos indexed")
+    return indexed

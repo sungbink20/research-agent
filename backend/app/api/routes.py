@@ -22,6 +22,7 @@ from app.schemas import (
     MemoResponse,
 )
 from app.services.memo_service import (
+    backfill_vector_store,
     create_memo,
     get_memo_by_id,
     get_recent_memos,
@@ -88,6 +89,20 @@ async def add_feedback(memo_id: str, feedback: FeedbackRequest):
     if record is None:
         raise HTTPException(status_code=404, detail="Memo not found")
     return record
+
+
+@router.post("/admin/backfill-vectors")
+async def backfill_vectors():
+    """
+    Index all existing memos into the vector store.
+    One-time operation for memos created before RAG was added.
+    """
+    try:
+        count = backfill_vector_store()
+        return {"status": "ok", "memos_indexed": count}
+    except Exception as e:
+        logger.error(f"Backfill failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Backfill failed: {e}")
 
 
 @router.get("/health")

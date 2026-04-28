@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router
 from app.config import CORS_ORIGINS, validate_config
 from app.db.database import init_db
+from app.pipeline.vector_store import init_vector_store
 
 # Configure logging -- structured logging would be better for prod,
 # but basic logging is fine for a local MVP
@@ -55,5 +56,11 @@ async def startup():
     # Initialize database
     init_db()
     logger.info("Database initialized.")
+
+    # Initialize vector store (RAG)
+    if init_vector_store():
+        logger.info("Vector store (ChromaDB) initialized.")
+    else:
+        logger.warning("Vector store unavailable -- RAG disabled.")
 
     logger.info("API ready. Docs at http://localhost:8000/docs")
